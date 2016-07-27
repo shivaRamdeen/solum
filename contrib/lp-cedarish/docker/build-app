@@ -117,6 +117,8 @@ shift
 IMG_EXTERNAL_REF=$1
 shift
 LP_IMG_TAG=$1
+#Need a way to set this variable based on user data..maybe from appfile.yaml
+UNIKERNEL="True"
 
 if ! (test_public_repo $GIT); then
     TLOG Could not reach $GIT with curl. Failing. && exit 1
@@ -261,10 +263,24 @@ if [[ $SOLUM_PARAMS != null ]]; then
   cp $SOLUM_PARAMS $APP_DIR/build/params_$EXT/solum_params
 fi
 
-if [[ $IMG_EXTERNAL_REF == "auto" ]]; then
-# Build the application image by injecting slug into runner
-  TLOG Creating Dockerfile
+if [[ $UNIKERNEL == "True"]]; then
+  appFileName=
+  TLOG Creating Dockerfile.
   cat << EOF > $APP_DIR/Dockerfile
+FROM $BASE_IMG
+ENV app=$appFileName
+COPY build /app
+WORKDIR /solum/bin
+RUN chmod +x build.sh
+RUN ./build.sh
+RUN chmod +x compile.sh
+RUN ./compile.sh $app
+EOF
+else
+  if [[ $IMG_EXTERNAL_REF == "auto" ]]; then
+  # Build the application image by injecting slug into runner
+    TLOG Creating Dockerfile
+    cat << EOF > $APP_DIR/Dockerfile
 # SOLUM APP BUILDER
 FROM solum/slugrunner
 ADD slug.tgz /app
@@ -272,9 +288,9 @@ COPY build/params_$EXT /root/params
 ENTRYPOINT ["/runner/init"]
 CMD ["start","web"]
 EOF
-else
-  TLOG Creating Dockerfile
-  cat << EOF > $APP_DIR/Dockerfile
+  else
+    TLOG Creating Dockerfile
+    cat << EOF > $APP_DIR/Dockerfile
 FROM $BASE_IMG
 COPY build /app
 WORKDIR /solum/bin
@@ -283,6 +299,7 @@ RUN ./build.sh
 WORKDIR /app
 CMD $DOCKER_RUN_CMD
 EOF
+  fi
 fi
 
 cd $APP_DIR
@@ -294,6 +311,7 @@ echo "build/.git" > .dockerignore
 if [[ $IMAGE_STORAGE == "glance" ]]; then
 
   docker_build_with_retry $DU_IMG_TAG .
+  #we can do docker copy here if unikernel. we need name of final binary
   [[ $? != 0 ]] && TLOG Docker build failed. && exit 1
 
   glance_upload_with_retry $DU_IMG_TAG

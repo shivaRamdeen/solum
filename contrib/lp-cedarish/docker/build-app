@@ -264,7 +264,7 @@ if [[ $SOLUM_PARAMS != null ]]; then
 fi
 
 if [[ $UNIKERNEL == "True"]]; then
-  appFileName=
+  appFileName="sniffex.c"
   TLOG Creating Dockerfile.
   cat << EOF > $APP_DIR/Dockerfile
 FROM $BASE_IMG
@@ -274,7 +274,7 @@ WORKDIR /solum/bin
 RUN chmod +x build.sh
 RUN ./build.sh
 RUN chmod +x compile.sh
-RUN ./compile.sh $app
+RUN ./compile.sh /app/$app
 EOF
 else
   if [[ $IMG_EXTERNAL_REF == "auto" ]]; then
@@ -308,12 +308,26 @@ STORAGE_OBJ_NAME="$APP-$TS-$COMMIT_ID"
 
 echo "build/.git" > .dockerignore
 
+#ensure that if unikernel then glance must be storage backend for now.
+if [[ $IMAGE_STORAGE != "glance" ]] && [[ $UNIKERNEL="True"]]; then
+  TLOG Booting unikernel only currently supported with glance backend storage. && exit 1
+fi
+
 if [[ $IMAGE_STORAGE == "glance" ]]; then
 
   docker_build_with_retry $DU_IMG_TAG .
-  #we can do docker copy here if unikernel. we need name of final binary
   [[ $? != 0 ]] && TLOG Docker build failed. && exit 1
-
+  
+  if [[ $UNIKERNEL == "True" ]]; then
+    #!!!name cannot be harcoded!!!
+    NAME="sniffex"
+    #copy unikernel executable from inside the container to the host.
+    docker cp $DU_IMG_TAG:/solum/bin/$NAME-rumprun.bin $APP_DIR/$NAME-rumprun.bin
+    [[ $? != 0]] && TLOG Docker failed to copy file from host to container. && exit 1
+    
+    TLOG Pointing solum to unikernel executable instead of container.
+    DU_IMG_TAG=$APP_DIR/$NAME-rumprun.bin
+  fi
   glance_upload_with_retry $DU_IMG_TAG
   image_id="$(app_glance_id $DU_IMG_TAG)"
   TLOG ===== finished uploading DU to $IMAGE_STORAGE

@@ -197,6 +197,17 @@ function glance_upload_with_retry () {
   sudo docker save "$DU_IMG_TAG" | glance --os-image-api-version 1 --os-auth-token $OS_AUTH_TOKEN image-create --container-format=docker --disk-format=raw --name "$DU_IMG_TAG" >& /dev/null
 }
 
+function glance_upload_unikernel() {
+  local DU_IMG_TAG=$1
+  shift
+  local KERNEL_TYPE=$1
+  shift
+  IMAGE_ID=$(glance --os-image-api-version 1 --os-auth-token $OS_AUTH_TOKEN image-create --container-format=bare --disk-format=raw --name $(basename $DU_IMG_TAG) --property kernel-type=$KERNEL_TYPE --file $DU_IMG_TAG  | grep "id" | awk '{ print $4 }')
+  glance --os-image-api-version 1 --os-auth-token $OS_AUTH_TOKEN image-update $IMAGE_ID --kernel-id $IMAGE_ID
+  echo $IMAGE_ID
+
+}
+
 function docker_build_with_retry () {
   local APP_NAME=$1
   local DESTINATION=$2

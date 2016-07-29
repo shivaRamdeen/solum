@@ -319,19 +319,27 @@ if [[ $IMAGE_STORAGE == "glance" ]]; then
   
   if [[ $UNIKERNEL == "True" ]]; then
     #!!!name cannot be harcoded!!!
+    #!!!kernel type cannot be hardcoded!!!
+    #!!!Unikernel Application Arguments cannot be hard coded!!!
+    KERNEL_TYPE="rumprun"
     NAME="sniffex"
+    APPLICATION_ARGS=""
     #copy unikernel executable from inside the container to the host.
     docker run $DU_IMG_TAG 
     containerID=$(docker ps -l -q)
     docker cp $containerID:/app/$NAME-rumprun.bin $APP_DIR/
-    [[ $? != 0 ]] && TLOG Docker failed to copy file from container to host. && exit 1
+    [[ $? != 0 ]] && TLOG Docker failed to copy unikernel image from container to host. && exit 1
     
     TLOG Pointing solum to unikernel executable instead of container.
     DU_IMG_TAG=$APP_DIR/$NAME-rumprun.bin
+
+    image_id=$(glance_upload_unikernel $DU_IMG_TAG $KERNEL_TYPE $APPLICATION_ARGS)
+    TLOG ===== finished uploading DU to $IMAGE_STORAGE
+  else
+    glance_upload_with_retry $DU_IMG_TAG
+    image_id="$(app_glance_id $DU_IMG_TAG)"
+    TLOG ===== finished uploading DU to $IMAGE_STORAGE
   fi
-  glance_upload_with_retry $DU_IMG_TAG
-  image_id="$(app_glance_id $DU_IMG_TAG)"
-  TLOG ===== finished uploading DU to $IMAGE_STORAGE
 elif [[ $IMAGE_STORAGE == "docker_registry" ]]; then
 
   DOCKER_REGISTRY=${DOCKER_REGISTRY:-'10.0.2.15:5042'}

@@ -119,8 +119,22 @@ shift
 IMG_EXTERNAL_REF=$1
 shift
 LP_IMG_TAG=$1
-#Need a way to set this variable based on user data..maybe from appfile.yaml
-UNIKERNEL="True"
+
+
+#determine if params file specifies app is a unikernel
+if [ -a $USER_PARAMS ]; then
+	KERNEL_TYPE=$(cat $USER_PARAMS | grep "kernel-type" | awk '{ print $2 }' | cut -d '"' -f 2)
+	if [[ $KERNEL_TYPE == "rumprun" ]]; then
+		UNIKERNEL="True"
+		APPLICATION_ARGS=$(cat $USER_PARAMS | grep "cmdline" | awk '{ print $2 }' | cut -d '"' -f 2)
+	else
+		TLOG Either kernel-type is not defined or Unikernel type not currently supported
+		UNIKERNEL="False"
+else
+	TLOG No USER_PARAMS found when trying to determine unikernel type
+	UNIKERNEL="False"
+fi
+
 
 if ! (test_public_repo $GIT); then
     TLOG Could not reach $GIT with curl. Failing. && exit 1
@@ -321,11 +335,7 @@ if [[ $IMAGE_STORAGE == "glance" ]]; then
   
   if [[ $UNIKERNEL == "True" ]]; then
     #!!!name cannot be harcoded!!!
-    #!!!kernel type cannot be hardcoded!!!
-    #!!!Unikernel Application Arguments cannot be hard coded!!!
-    KERNEL_TYPE="rumprun"
     NAME="sniffex"
-    APPLICATION_ARGS=""
     #copy unikernel executable from inside the container to the host.
     docker run $DU_IMG_TAG 
     containerID=$(docker ps -l -q)

@@ -547,6 +547,7 @@ class Handler(object):
             update_assembly_status(ctxt, assembly_id, ASSEMBLY_STATES.ERROR)
             return
         else:
+            LOG.debug("!!!!!!!!!!SHIVA!!!!!!!!!!!!!!!:: DU_IMG_LOC::%s ,,, DOCKER_IMG_NAME::: %s" % (du_image_loc,docker_image_name))
             job_update_notification(ctxt, build_id, IMAGE_STATES.READY,
                                     description='built successfully',
                                     created_image_id=du_image_loc,

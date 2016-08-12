@@ -462,7 +462,6 @@ class Handler(object):
                                             source_format, image_format,
                                             commit_sha,
                                             lp_image_tag=image_tag)
-        LOG.info("SHIVA!!!!!!!!!!!!!!!!:::%s" % build_cmd)
         solum.TLS.trace.support_info(build_cmd=' '.join(build_cmd),
                                      assembly_id=assembly_id)
 

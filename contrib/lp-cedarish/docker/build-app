@@ -334,7 +334,6 @@ if [[ $IMAGE_STORAGE == "glance" ]]; then
     DU_IMG_TAG=$APP_DIR/$NAME-rumprun.bin
 
     image_id=$(glance_upload_unikernel $DU_IMG_TAG $KERNEL_TYPE $APPLICATION_ARGS)
-    echo $image_id >> /home/stack/final_image_id.log
     TLOG ===== finished uploading DU to $IMAGE_STORAGE
   else
     glance_upload_with_retry $DU_IMG_TAG

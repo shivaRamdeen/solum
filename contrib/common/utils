@@ -202,7 +202,8 @@ function glance_upload_unikernel() {
   shift
   local KERNEL_TYPE=$1
   shift
-  IMAGE_ID=$(glance --os-image-api-version 1 --os-auth-token $OS_AUTH_TOKEN image-create --container-format=bare --disk-format=raw --name $(basename $DU_IMG_TAG) --property kernel-type=$KERNEL_TYPE --file $DU_IMG_TAG  | grep "id" | awk '{ print $4 }')
+  CMDLINE_ARGS=""
+  IMAGE_ID=$(glance --os-auth-token $OS_AUTH_TOKEN image-create --container-format=bare --disk-format=raw --name $(basename $DU_IMG_TAG) --property cmdline=$CMDLINE_ARGS --property kernel-type=$KERNEL_TYPE --file $DU_IMG_TAG  | grep "id" | awk '{ print $4 }')
   glance --os-auth-token $OS_AUTH_TOKEN image-update $IMAGE_ID --kernel-id $IMAGE_ID >& /dev/null
   echo $IMAGE_ID
 

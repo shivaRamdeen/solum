@@ -43,6 +43,8 @@ TEMP_URL_TTL=${TEMP_URL_TTL:-null}
 OPR_LP_DOWNLOAD_STRATEGY=${OPR_LP_DOWNLOAD_STRATEGY:-null}
 OPER_AUTH_TOKEN=${OPER_AUTH_TOKEN:-null}
 OPER_OS_STORAGE_URL=${OPER_OS_STORAGE_URL:-null}
+echo $USER_PARAMS >> ~/param-debug.log
+echo $SOLUM_PARAMS >> ~/param-debug.log
 
 # TLOG, PRUN, etc. defined in common/utils
 HERE=$(dirname $0)

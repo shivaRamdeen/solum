@@ -123,7 +123,7 @@ LP_IMG_TAG=$1
 
 #determine if params file specifies app is a unikernel
 if [ -a $USER_PARAMS ]; then
-	KERNEL_TYPE=$(cat $USER_PARAMS | grep "kernel-type" | awk '{ print $2 }' | cut -d '"' -f 2)
+	KERNEL_TYPE=$(cat $USER_PARAMS | grep "kernel_type" | awk '{ print $2 }' | cut -d '"' -f 2)
 	if [[ $KERNEL_TYPE == "rumprun" ]]; then
 		UNIKERNEL="True"
 		APPLICATION_ARGS=$(cat $USER_PARAMS | grep "cmdline" | awk '{ print $2 }' | cut -d '"' -f 2)

@@ -456,7 +456,7 @@ class Handler(object):
         app_obj = get_app_by_assem_id(ctxt, assembly_id)
 
         LOG.debug("Deploying app %s" % app_obj.name)
-        LOG.debug("!!!!!!!!! SHIVA !!!!!!!!!!!!!::: %s " % app_obj)
+        LOG.debug("!!!!!!!!! SHIVA !!!!!!!!!!!!!::: %s " % app_obj.raw_content)
         save_du_ref_for_scaling(ctxt, assembly_id, du=image_loc)
 
         # Get the heat client

@@ -456,7 +456,7 @@ class Handler(object):
         app_obj = get_app_by_assem_id(ctxt, assembly_id)
 
         LOG.debug("Deploying app %s" % app_obj.name)
-        LOG.debug("!!!!!!!!!SHIVA!!!!!!!!!!!!!::: %s " % app_obj)
+        LOG.debug("!!!!!!!!! SHIVA !!!!!!!!!!!!!::: %s " % app_obj)
         save_du_ref_for_scaling(ctxt, assembly_id, du=image_loc)
 
         # Get the heat client
@@ -665,7 +665,7 @@ class Handler(object):
         wait_interval = cfg.CONF.deployer.wait_interval
         growth_factor = cfg.CONF.deployer.growth_factor
 
-	LOG.debug("!!!!!!!!SHIVA!!!!!!!!:::: %s ;; %s ;; %s" % (assembly_id, ctxt, ports) )
+	LOG.debug("!!!!!!!! SHIVA !!!!!!!!:::: %s ;; %s ;; %s" % (assembly_id, ctxt, ports) )
         stack = None
 
         for count in range(cfg.CONF.deployer.max_attempts):

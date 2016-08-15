@@ -574,11 +574,11 @@ class Handler(object):
         update_assembly(ctxt, assembly_id, {'status': STATES.DEPLOYING})
         
         #(SHIVA)check if unikernel: NOTE:mirage not supported yet
-	if app_obj.raw_content["parameters"]["user_params"]["kernel_type"] in ["rumprun", "mirage"]:
-		 result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
+		if app_obj.raw_content["parameters"]["user_params"]["kernel_type"] in ["rumprun", "mirage"]:
+			result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
                                           stack_id, ports, t_logger, unikernel = True)
         else:
-	        result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
+	    	result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
 	                                          stack_id, ports, t_logger)
         assem.status = result
         t_logger.upload()
@@ -669,7 +669,7 @@ class Handler(object):
         wait_interval = cfg.CONF.deployer.wait_interval
         growth_factor = cfg.CONF.deployer.growth_factor
 
-	LOG.debug("!!!!!!!! SHIVA !!!!!!!!:::: %s ;; %s ;; %s" % (assembly_id, ctxt, ports) )
+		LOG.debug("!!!!!!!! SHIVA !!!!!!!!:::: %s ;; %s ;; %s" % (assembly_id, ctxt, ports) )
         stack = None
 
         for count in range(cfg.CONF.deployer.max_attempts):

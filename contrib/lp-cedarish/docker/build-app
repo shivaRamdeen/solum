@@ -130,6 +130,7 @@ if [ -a $USER_PARAMS ]; then
 	else
 		TLOG Either kernel-type is not defined or Unikernel type not currently supported
 		UNIKERNEL="False"
+	fi
 else
 	TLOG No USER_PARAMS found when trying to determine unikernel type
 	UNIKERNEL="False"

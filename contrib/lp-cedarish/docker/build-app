@@ -121,7 +121,7 @@ shift
 LP_IMG_TAG=$1
 
 
-#determine if params file specifies app is a unikernel
+# determine if params file specifies app is a unikernel
 if [ -a $USER_PARAMS ]; then
 	KERNEL_TYPE=$(cat $USER_PARAMS | grep "kernel_type" | awk '{ print $2 }' | cut -d '"' -f 2)
 	if [[ $KERNEL_TYPE == "rumprun" ]]; then
@@ -336,16 +336,15 @@ if [[ $IMAGE_STORAGE == "glance" ]]; then
   [[ $? != 0 ]] && TLOG Docker build failed. && exit 1
   
   if [[ $UNIKERNEL == "True" ]]; then
-    #!!!name cannot be harcoded!!!
-    NAME="sniffex"
+    xNAME=${FILE_TO_COMPILE%.*}-rumprun.bin
     #copy unikernel executable from inside the container to the host.
-    docker run $DU_IMG_TAG 
+    docker run $DU_IMG_TAG
     containerID=$(docker ps -l -q)
-    docker cp $containerID:/app/$NAME-rumprun.bin $APP_DIR/
+    docker cp $containerID:/app/$xNAME $APP_DIR/
     [[ $? != 0 ]] && TLOG Docker failed to copy unikernel image from container to host. && exit 1
     
     TLOG Pointing solum to unikernel executable instead of container.
-    DU_IMG_TAG=$APP_DIR/$NAME-rumprun.bin
+    DU_IMG_TAG=$APP_DIR/$xNAME
 
     image_id=$(glance_upload_unikernel $DU_IMG_TAG $KERNEL_TYPE $APPLICATION_ARGS)
     TLOG ===== finished uploading DU to $IMAGE_STORAGE

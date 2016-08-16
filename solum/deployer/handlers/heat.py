@@ -13,7 +13,6 @@
 #    limitations under the License.
 
 """Solum Deployer Heat handler."""
-import pdb
 import json
 import logging
 import socket
@@ -574,7 +573,6 @@ class Handler(object):
                 return
         update_assembly(ctxt, assembly_id, {'status': STATES.DEPLOYING})
         
-        pdb.set_trace()
         # (SHIVA)check if unikernel: NOTE:mirage not supported yet
 	try:
 	    usrKernType = json.loads(app_obj.raw_content)['parameters']['user_params']['kernel_type']
@@ -679,7 +677,6 @@ class Handler(object):
         wait_interval = cfg.CONF.deployer.wait_interval
         growth_factor = cfg.CONF.deployer.growth_factor
 
-        LOG.debug("!!!!!!!! SHIVA !!!!!!!!:::: %s ;; %s ;; %s" % (assembly_id, ctxt, ports) )
         stack = None
 
         for count in range(cfg.CONF.deployer.max_attempts):

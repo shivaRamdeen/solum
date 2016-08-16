@@ -13,7 +13,7 @@
 #    limitations under the License.
 
 """Solum Deployer Heat handler."""
-
+import pdb
 import json
 import logging
 import socket
@@ -456,7 +456,7 @@ class Handler(object):
         app_obj = get_app_by_assem_id(ctxt, assembly_id)
 
         LOG.debug("Deploying app %s" % app_obj.name)
-        LOG.debug("!!!!!!!!! SHIVA !!!!!!!!!!!!!::: %s " % app_obj.raw_content["parameters"])
+
         save_du_ref_for_scaling(ctxt, assembly_id, du=image_loc)
 
         # Get the heat client
@@ -573,10 +573,21 @@ class Handler(object):
                 t_logger.upload()
                 return
         update_assembly(ctxt, assembly_id, {'status': STATES.DEPLOYING})
-        
-        #(SHIVA)check if unikernel: NOTE:mirage not supported yet
-	result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
-	                                  stack_id, ports, t_logger)
+        pdb.set_trace()
+        # (SHIVA)check if unikernel: NOTE:mirage not supported yet
+	try:
+	    usrKernType = json.loads(app_obj.raw_content)['parameters']['user_params']['kernel_type']
+	except:
+	    LOG.debug("Unable to determine if app is a unikernel. Error getting user_params")
+	    usrKernType = None
+
+	# If unikernel, dont wait for '200 OK' response from app.
+	if usrKernType in ["rumprun","mirageOS"]:
+	    result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
+	                                      stack_id, ports, t_logger, "True")
+	else:
+	    result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
+	                                      stack_id, ports, t_logger)
         assem.status = result
         t_logger.upload()
         if result == STATES.DEPLOYMENT_COMPLETE:

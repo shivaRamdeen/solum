@@ -573,13 +573,13 @@ class Handler(object):
                 return
         update_assembly(ctxt, assembly_id, {'status': STATES.DEPLOYING})
         
-        #(SHIVA)check if unikernel: NOTE:mirage not supported yet
-		if app_obj.raw_content["parameters"]["user_params"]["kernel_type"] in ["rumprun", "mirage"]:
-			result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
+        # (SHIVA)check if unikernel: NOTE:mirage not supported yet
+        if app_obj.raw_content["parameters"]["user_params"]["kernel_type"] in ["rumprun", "mirage"]:
+            result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
                                           stack_id, ports, t_logger, unikernel = True)
         else:
-	    	result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
-	                                          stack_id, ports, t_logger)
+            result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
+                                              stack_id, ports, t_logger)
         assem.status = result
         t_logger.upload()
         if result == STATES.DEPLOYMENT_COMPLETE:
@@ -669,7 +669,7 @@ class Handler(object):
         wait_interval = cfg.CONF.deployer.wait_interval
         growth_factor = cfg.CONF.deployer.growth_factor
 
-		LOG.debug("!!!!!!!! SHIVA !!!!!!!!:::: %s ;; %s ;; %s" % (assembly_id, ctxt, ports) )
+        LOG.debug("!!!!!!!! SHIVA !!!!!!!!:::: %s ;; %s ;; %s" % (assembly_id, ctxt, ports) )
         stack = None
 
         for count in range(cfg.CONF.deployer.max_attempts):
@@ -723,44 +723,45 @@ class Handler(object):
         successful_ports = set()
         du_is_up = False
         if unikernel is None:
-	        for count in range(cfg.CONF.deployer.du_attempts):
-	            for prt in ports:
-	                if prt not in successful_ports:
-	                    du_url = 'http://{host}:{port}'.format(host=host_ip,
-	                                                           port=prt)
-	                    try:
-	                        if repo_utils.is_reachable(du_url):
-	                            successful_ports.add(prt)
-	                            if len(successful_ports) == len(ports):
-	                                du_is_up = True
-	                                break
-	                    except socket.timeout:
-	                        LOG.debug("Connection to %s timed out"
-	                                  "assembly ID: %s" % (du_url, assembly_id))
-	                    except (httplib2.HttpLib2Error, socket.error) as serr:
-	                        if count % 5 == 0:
-	                            LOG.exception(serr)
-	                        else:
-	                            LOG.debug(".")
-	                    except Exception as exp:
-	                        LOG.exception(exp)
-	                        update_assembly(ctxt, assembly_id,
-	                                        {'status': STATES.ERROR})
-	                        lg_msg = ("App deployment error: unexpected error "
-	                                  " when trying to reach app endpoint")
-	                        t_logger.log(logging.ERROR, lg_msg)
-	                        return STATES.ERROR
-	            if du_is_up:
-	                break
-	            time.sleep(1)
-	    else:
-	    	#since unikernels would not necessarily be able to respond with 200 Ok...
-	    	#Solum will never know if the application is running and thus error out even though
-	    	#our application has launched successfully.
-	    	#As such the above verifcation process is skipped for unikernels and it will be assumed
-	    	#That as long as heat stack create completed sucessfully, then our application is running as well.
-	    	#This is not the best Solution at this time. Simply a stub that allows futher development of unikernel support
-	    	du_is_up = True
+            for count in range(cfg.CONF.deployer.du_attempts):
+                for prt in ports:
+                    if prt not in successful_ports:
+                        du_url = 'http://{host}:{port}'.format(host=host_ip,
+                                                               port=prt)
+                        try:
+                            if repo_utils.is_reachable(du_url):
+                                successful_ports.add(prt)
+                                if len(successful_ports) == len(ports):
+                                    du_is_up = True
+                                    break
+                        except socket.timeout:
+                            LOG.debug("Connection to %s timed out"
+                                      "assembly ID: %s" % (du_url, assembly_id))
+                        except (httplib2.HttpLib2Error, socket.error) as serr:
+                            if count % 5 == 0:
+                                LOG.exception(serr)
+                            else:
+                                LOG.debug(".")
+                        except Exception as exp:
+                            LOG.exception(exp)
+                            update_assembly(ctxt, assembly_id,
+                                            {'status': STATES.ERROR})
+                            lg_msg = ("App deployment error: unexpected error "
+                                      " when trying to reach app endpoint")
+                            t_logger.log(logging.ERROR, lg_msg)
+                            return STATES.ERROR
+                if du_is_up:
+                    break
+                time.sleep(1)
+        else:
+            # since unikernels would not necessarily be able to respond with 200 Ok...
+            # Solum will never know if the application is running and thus error out even though
+            # our application has launched successfully.
+            # As such the above verifcation process is skipped for unikernels and it will be assumed
+            # That as long as heat stack create completed sucessfully, then our application is running as well.
+            # This is not the best Solution at this time. Simply a stub that allows futher development of unikernel
+            # support
+            du_is_up = True
 
         if du_is_up:
             to_update = {'status': STATES.DEPLOYMENT_COMPLETE}

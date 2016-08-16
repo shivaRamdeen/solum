@@ -456,9 +456,7 @@ class Handler(object):
         app_obj = get_app_by_assem_id(ctxt, assembly_id)
 
         LOG.debug("Deploying app %s" % app_obj.name)
-<<<<<<< HEAD
 
->>>>>>> user_param_check
         save_du_ref_for_scaling(ctxt, assembly_id, du=image_loc)
 
         # Get the heat client
@@ -575,7 +573,6 @@ class Handler(object):
                 t_logger.upload()
                 return
         update_assembly(ctxt, assembly_id, {'status': STATES.DEPLOYING})
-<<<<<<< HEAD
         
         pdb.set_trace()
         # (SHIVA)check if unikernel: NOTE:mirage not supported yet
@@ -592,7 +589,7 @@ class Handler(object):
 	else:
 	    result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
 	                                      stack_id, ports, t_logger)
->>>>>>> user_param_check
+
         assem.status = result
         t_logger.upload()
         if result == STATES.DEPLOYMENT_COMPLETE:
@@ -736,7 +733,6 @@ class Handler(object):
         successful_ports = set()
         du_is_up = False
         if unikernel is None:
-<<<<<<< HEAD
             for count in range(cfg.CONF.deployer.du_attempts):
                 for prt in ports:
                     if prt not in successful_ports:
@@ -776,8 +772,6 @@ class Handler(object):
             # This is not the best Solution at this time. Simply a stub that allows futher development of unikernel
             # support
             du_is_up = True
-=======
->>>>>>> user_param_check
 
         if du_is_up:
             to_update = {'status': STATES.DEPLOYMENT_COMPLETE}

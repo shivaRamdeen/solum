@@ -575,12 +575,8 @@ class Handler(object):
         update_assembly(ctxt, assembly_id, {'status': STATES.DEPLOYING})
         
         #(SHIVA)check if unikernel: NOTE:mirage not supported yet
-		if app_obj.raw_content["parameters"]["user_params"]["kernel_type"] in ["rumprun", "mirage"]:
-			 result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
-                                          stack_id, ports, t_logger, unikernel = True)
-        else:
-	        result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
-	                                          stack_id, ports, t_logger)
+	result = self._check_stack_status(ctxt, assembly_id, heat_clnt,
+	                                  stack_id, ports, t_logger)
         assem.status = result
         t_logger.upload()
         if result == STATES.DEPLOYMENT_COMPLETE:

@@ -750,14 +750,15 @@ class Handler(object):
 	            if du_is_up:
 	                break
 	            time.sleep(1)
-	    else:
-	    	#since unikernels would not necessarily be able to respond with 200 Ok...
-	    	#Solum will never know if the application is running and thus error out even though
-	    	#our application has launched successfully.
-	    	#As such the above verifcation process is skipped for unikernels and it will be assumed
-	    	#That as long as heat stack create completed sucessfully, then our application is running as well.
-	    	#This is not the best Solution at this time. Simply a stub that allows futher development of unikernel support
-	    	du_is_up = True
+	else:
+  	    # since unikernels would not necessarily be able to respond with 200 Ok...
+    	    # Solum will never know if the application is running and thus error out even though
+    	    # our application has launched successfully.
+    	    # As such the above verifcation process is skipped for unikernels and it will be assumed
+    	    # That as long as heat stack create completed sucessfully, then our application is running as well.
+    	    # This is not the best Solution at this time. Simply a stub that allows futher development of 
+	    # unikernel support
+    	    du_is_up = True
 
         if du_is_up:
             to_update = {'status': STATES.DEPLOYMENT_COMPLETE}

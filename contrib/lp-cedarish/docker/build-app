@@ -127,6 +127,7 @@ if [ -a $USER_PARAMS ]; then
 	if [[ $KERNEL_TYPE == "rumprun" ]]; then
 		UNIKERNEL="True"
 		APPLICATION_ARGS=$(cat $USER_PARAMS | grep "cmdline" | awk '{ print $2 }' | cut -d '"' -f 2)
+		COMPILER_FLAGS=$(cat $USER_PARAMS | grep "compiler_flags" | cut -d '"' -f 2)
 	else
 		TLOG Either kernel-type is not defined or Unikernel type not currently supported
 		UNIKERNEL="False"
@@ -290,7 +291,7 @@ WORKDIR /solum/bin
 RUN chmod +x build.sh
 RUN ./build.sh
 RUN chmod +x compile.sh
-RUN ./compile.sh /app/$appFileName -lpcap
+RUN ./compile.sh /app/$appFileName $COMPILER_FLAGS
 EOF
 else
   if [[ $IMG_EXTERNAL_REF == "auto" ]]; then
